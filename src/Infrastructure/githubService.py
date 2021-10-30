@@ -19,26 +19,35 @@ class GithubService:
     async def getRepos(self):
         try:
 
-            response = await requests.get(self.hostUrl +
-                                          self.endPoints["repos"])
-            if response.status_code != 200:
-                raise APICallFailed(response.status_code)
+            response = await self.__callGetAPI(self.hostUrl +
+                                               self.endPoints["repos"])
 
-            jsonResponse = json.loads(response.text)
 
-            return jsonResponse
 
-        except:
-            raise Exception("Exception occured when parsing json response")
+            return response
+
+        except (Exception):
+            raise Exception(Exception.message)
 
     async def getContributorsForRepo(self, repoName):
 
         try:
 
-            response = await requests.get(
+            response = await self.__callGetAPI(
                 self.hostUrl +
                 self.endpoints["contributors"].replace("{repoName}", repoName))
 
+            return response
+
+        except(Exception):
+
+            raise Exception(Exception.message)
+
+    async def __callGetAPI(url, headers={}):
+
+        try:
+
+            response = await requests.get(url, headers=headers)
             if response.status_code != 200:
                 raise APICallFailed(response.status_code)
 
